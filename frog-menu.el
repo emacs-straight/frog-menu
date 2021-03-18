@@ -510,7 +510,7 @@ Returns window of displayed buffer."
 
 
 (defun frog-menu--get-avy-candidates (&optional b w start end)
-  "Return candidates to be passed to `avy--process'.
+  "Return candidates to be passed to `avy-process'.
 
 B is the buffer of the candidates and defaults to the current
 one. W is the window where the candidates can be found and
@@ -601,7 +601,7 @@ ACTIONS is the argument of `frog-menu-read'."
                (avy-style 'at-full)
                (avy-action #'identity)
                (pos (with-selected-window window
-                      (avy--process
+                      (avy-process
                        candidates
                        (avy--style-fn avy-style)))))
           (cond ((number-or-marker-p pos)
@@ -759,7 +759,10 @@ RETURN will be the returned value if KEY is pressed."
         (funcall cuhandler buf window)))
     (when (eq res 'frog-menu--complete)
       (setq res (frog-menu--complete prompt strings)))
-    (cond ((eq convf #'car)
+    (cond ((and (eq convf #'car)
+                (stringp res)
+                (eq (get-text-property 0 'face res)
+                    'frog-menu-candidates-face))
            (cdr (assoc res collection)))
           (t res))))
 
